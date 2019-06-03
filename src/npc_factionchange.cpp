@@ -3,6 +3,8 @@
 
 class npc_factionchange : public CreatureScript
 {
+    public:
+
     npc_factionchange() : CreatureScript("npc_factionchange") { }
 
     bool OnGossipHello(Player* player, Creature* creature)
