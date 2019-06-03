@@ -1,5 +1,7 @@
 #include "Config.h"
 #include "ScriptMgr.h"
+#include "GossipDef.h"
+#include "Implementation/CharacterDatabase.h"
 
 class npc_factionchange : public CreatureScript
 {
@@ -9,8 +11,8 @@ class npc_factionchange : public CreatureScript
 
     bool OnGossipHello(Player* player, Creature* creature)
     {
-        player->ADD_GOSSIP_ITEM(1, "How bad can it be?  I am interested.", GOSSIP_SENDER_MAIN, 1);
-        player->ADD_GOSSIP_ITEM(1, "Ahh, I think I am in the wrong place. I have to go.", GOSSIP_SENDER_MAIN, 2);
+        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "How bad can it be?  I am interested.", GOSSIP_SENDER_MAIN, 1);
+        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Ahh, I think I am in the wrong place. I have to go.", GOSSIP_SENDER_MAIN, 2);
         player->PlayerTalkClass->SendGossipMenu(60000, creature->GetGUID());
         
         return true;
@@ -23,15 +25,20 @@ class npc_factionchange : public CreatureScript
         switch (action)
         {
         case 1:
-            player->ADD_GOSSIP_ITEM(1, "|TInterface/ICONS/vas_factionchange:24:24:-18|t[I have fought worse and come away with but a scratch. Do it!]", GOSSIP_SENDER_MAIN, 101);
-            player->ADD_GOSSIP_ITEM(1, "I think perhaps I will go sort out my life insurance and come back another day.", GOSSIP_SENDER_MAIN, 102);
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_INTERACT_1, "I have fought worse and come away with but a scratch. Do it!", GOSSIP_SENDER_MAIN, 101);
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I think perhaps I will go sort out my life insurance and come back another day.", GOSSIP_SENDER_MAIN, 102);
             player->PlayerTalkClass->SendGossipMenu(60001, creature->GetGUID());
             return true;
             break;
             
         case 101:
-            // Add faction change flag
-            player->ADD_GOSSIP_ITEM(1, "I understand, thank you!", GOSSIP_SENDER_MAIN, 202);
+            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+            stmt->setUInt16(0, uint16(AT_LOGIN_CHANGE_FACTION));
+            player->SetAtLoginFlag(AT_LOGIN_CHANGE_FACTION);
+            stmt->setUInt32(1, player->GetGUIDLow());
+            CharacterDatabase.Execute(stmt);
+        
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I understand, thank you!", GOSSIP_SENDER_MAIN, 202);
             player->PlayerTalkClass->SendGossipMenu(60002, creature->GetGUID());
             return true;
             break;
