@@ -1,4 +1,5 @@
 #include "Config.h"
+#include "Chat.h"
 #include "ScriptMgr.h"
 #include "GossipDef.h"
 #include "Implementation/CharacterDatabase.h"
@@ -37,6 +38,16 @@ class npc_factionchange : public CreatureScript
             player->SetAtLoginFlag(AT_LOGIN_CHANGE_FACTION);
             stmt->setUInt32(1, player->GetGUIDLow());
             CharacterDatabase.Execute(stmt);
+            
+            // Inform the player
+            std::ostringstream ss;
+            ss << "|cffFF0000[Venture Bay]:|cffFF8000 Your character has been marked for a faction change. Log out to continue.";
+            ChatHandler(player->GetSession()).SendSysMessage(ss.str().c_str());
+        
+            // Log to server
+            std::ostringstream ss;
+            ss << player->GetName() << " has requested a faction change.";
+            sWorld->SendServerMessage(SERVER_MSG_STRING, ss.str().c_str());
         
             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I understand, thank you!", GOSSIP_SENDER_MAIN, 202);
             player->PlayerTalkClass->SendGossipMenu(60002, creature->GetGUID());
