@@ -40,14 +40,14 @@ class npc_factionchange : public CreatureScript
             CharacterDatabase.Execute(stmt);
             
             // Inform the player
-            std::ostringstream ss;
-            ss << "|cffFF0000[Venture Bay]:|cffFF8000 Your character has been marked for a faction change. Log out to continue.";
-            ChatHandler(player->GetSession()).SendSysMessage(ss.str().c_str());
+            std::ostringstream ssp;
+            ssp << "|cffFF0000[Venture Bay]:|cffFF8000 Your character has been marked for a faction change. Log out to continue.";
+            ChatHandler(player->GetSession()).SendSysMessage(ssp.str().c_str());
         
             // Log to server
-            std::ostringstream ss;
-            ss << player->GetName() << " has requested a faction change.";
-            sWorld->SendServerMessage(SERVER_MSG_STRING, ss.str().c_str());
+            std::ostringstream sss;
+            sss << player->GetName() << " has requested a faction change.";
+            sWorld->SendServerMessage(SERVER_MSG_STRING, sss.str().c_str());
         
             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I understand, thank you!", GOSSIP_SENDER_MAIN, 202);
             player->PlayerTalkClass->SendGossipMenu(60002, creature->GetGUID());
