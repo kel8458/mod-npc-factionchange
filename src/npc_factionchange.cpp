@@ -24,14 +24,14 @@ class npc_factionchange : public CreatureScript
         
         switch (action)
         {
-        case 1:
+        case 1: {
             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_INTERACT_1, "I have fought worse and come away with but a scratch. Do it!", GOSSIP_SENDER_MAIN, 101);
             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I think perhaps I will go sort out my life insurance and come back another day.", GOSSIP_SENDER_MAIN, 102);
             player->PlayerTalkClass->SendGossipMenu(60001, creature->GetGUID());
             return true;
             break;
-            
-        case 101:
+        }
+        case 101: {
             PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
             stmt->setUInt16(0, uint16(AT_LOGIN_CHANGE_FACTION));
             player->SetAtLoginFlag(AT_LOGIN_CHANGE_FACTION);
@@ -40,14 +40,15 @@ class npc_factionchange : public CreatureScript
         
             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I understand, thank you!", GOSSIP_SENDER_MAIN, 202);
             player->PlayerTalkClass->SendGossipMenu(60002, creature->GetGUID());
-            return true;
-            break;
-         
-        default:
-            player->PlayerTalkClass->SendCloseGossip();
+            
             return true;
             break;
         }
+        default: {
+            player->PlayerTalkClass->SendCloseGossip();
+            return true;
+            break;
+        }}
     }
 };
 
